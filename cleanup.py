@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import argparse
-import gitlab
+from gitlab import Gitlab
+from gitlab.exceptions import *
+
+def cleanup_project(proj):
+    print('Cleaning up', proj.name_with_namespace)
 
 def parse_args():
     ap = argparse.ArgumentParser()
@@ -23,8 +27,19 @@ def parse_args():
 
 def main():
     args = parse_args()
-    gl = gitlab.Gitlab.from_config(gitlab_id=args.gitlab)
+    gl = Gitlab.from_config(gitlab_id=args.gitlab)
 
+    if args.all_projects:
+        for proj in gl.projects.all(all=True):
+            cleanup_project(proj)
+    else:
+        for pname in args.projects:
+            try:
+                proj = gl.projects.get(pname)
+            except GitlabGetError as e:
+                print("Error getting project", pname, e)
+                continue
+            cleanup_project(proj)
 
 if __name__ == '__main__':
     main()
