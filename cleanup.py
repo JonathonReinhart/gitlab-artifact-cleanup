@@ -7,6 +7,27 @@ from gitlab.exceptions import *
 def cleanup_project(proj):
     print('Cleaning up', proj.name_with_namespace)
 
+    total_size = 0
+
+    for build in proj.builds.list(all=True):
+
+        # Skip builds without artifacts
+        if not hasattr(build, 'artifacts_file'): continue
+
+        # Skip builds run for tagged commits
+        if build.tag:
+            print('  Build {}: Skipping for tag'.format(build.id))
+            continue
+
+        af = build.artifacts_file
+        total_size += af['size']
+        print('  Build {}: Deleting {} ({} bytes)'.format(build.id, af['filename'], af['size']))
+
+        # TODO: Erase build
+
+    return total_size
+
+
 def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument('-g', '--gitlab',
