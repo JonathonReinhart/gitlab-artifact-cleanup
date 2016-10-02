@@ -23,7 +23,7 @@ def cleanup_project(proj):
         total_size += af['size']
         print('  Build {}: Deleting {} ({} bytes)'.format(build.id, af['filename'], af['size']))
 
-        # TODO: Erase build
+        build.erase()
 
     return total_size
 
