@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
+__version__ = '0.1.0'
+
 class GitlabArtifactCleanup(object):
     def __init__(self, dry_run=False, min_age=None):
         self.dry_run = dry_run
@@ -95,6 +97,7 @@ def parse_args():
             help="Don't actually delete anything")
     ap.add_argument('-p', '--project', dest='projects', action='append',
             help='Project for which to cleanup artifacts -- can be given multiple times')
+    ap.add_argument('-V', '--version', action='version', version='%(prog)s ' + __version__)
 
     args = ap.parse_args()
 
