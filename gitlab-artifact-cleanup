@@ -34,7 +34,7 @@ class GitlabArtifactCleanup(object):
 
             # Skip builds run for tagged commits
             if build.tag:
-                print('Skipping for tag')
+                print('Skipping, tagged "{}"'.format(build.ref))
                 continue
 
             # Skip builds that are too recent
