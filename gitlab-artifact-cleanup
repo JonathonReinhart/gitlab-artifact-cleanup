@@ -12,13 +12,15 @@ class GitlabArtifactCleanup(object):
         self.dry_run = dry_run
         self.min_age = timedelta() if min_age is None else min_age
 
-        self.total_deleted = 0
+        self.total_size = 0
+        self.total_count = 0
 
 
     def cleanup_project(self, proj):
-        print('Cleaning up', proj.name_with_namespace)
+        print(proj.name_with_namespace)
 
-        total_size = 0
+        subtotal_size = 0
+        subtotal_count = 0
         now = datetime.utcnow()
 
         for build in proj.builds.list(all=True):
@@ -42,7 +44,6 @@ class GitlabArtifactCleanup(object):
                 print('Skipping, too recent')
                 continue
 
-            total_size += af['size']
             print('{action} {filename}'.format(
                 action = 'Would delete' if self.dry_run else 'Deleting',
                 filename = af['filename'],
@@ -51,8 +52,17 @@ class GitlabArtifactCleanup(object):
             if not self.dry_run:
                 build.erase()
 
-        self.total_deleted += total_size
-        return total_size
+            subtotal_size += af['size']
+            self.total_size += af['size']
+            subtotal_count += 1
+            self.total_count += 1
+
+
+        if subtotal_count > 0:
+            print('  {action} {size} in {count} artifacts'.format(
+                action = 'Would delete' if self.dry_run else 'Deleted',
+                size = format_datasize(subtotal_size),
+                count = subtotal_count))
 
 
 def format_datasize(b):
@@ -120,7 +130,12 @@ def parse_args():
 
 def main():
     args = parse_args()
-    print('Deleting artifacts older than {}'.format(args.min_age))
+
+    print('Would delete' if args.dry_run else 'Deleting', 'non-tagged artifacts', end='')
+    if args.min_age:
+        print(' older than', args.min_age, end='')
+    print('\n')
+
 
     gl = Gitlab.from_config(gitlab_id=args.gitlab)
 
@@ -139,14 +154,12 @@ def main():
             except GitlabGetError as e:
                 print("Error getting project", pname, e)
                 continue
-            deleted = cleanup.cleanup_project(proj)
-            print('  {action} {size} bytes of artifacts'.format(
-                action = 'Would delete' if args.dry_run else 'Deleted',
-                size = deleted))
+            cleanup.cleanup_project(proj)
 
-    print('{action} {size} bytes of artifacts total'.format(
+    print('\n{action} {size} in {count} artifacts total'.format(
         action = 'Would delete' if args.dry_run else 'Deleted',
-        size = cleanup.total_deleted))
+        size = format_datasize(cleanup.total_size),
+        count = cleanup.total_count))
 
 if __name__ == '__main__':
     main()
