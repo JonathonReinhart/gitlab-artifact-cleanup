@@ -22,29 +22,31 @@ class GitlabArtifactCleanup(object):
         now = datetime.utcnow()
 
         for build in proj.builds.list(all=True):
+            try:
+                af = build.artifacts_file
+            except AttributeError:
+                # Skip builds without artifacts
+                continue
 
-            # Skip builds without artifacts
-            if not hasattr(build, 'artifacts_file'): continue
+            print('  Build {} ({}): '.format(build.id, format_datasize(af['size'])), end='')
 
             # Skip builds run for tagged commits
             if build.tag:
-                print('  Build {}: Skipping for tag'.format(build.id))
+                print('Skipping for tag')
                 continue
 
             # Skip builds that are too recent
             ts = datetime.strptime(build.created_at, "%Y-%m-%dT%H:%M:%S.%fZ")
             age = now - ts
             if age < self.min_age:
-                print('  Build {}: Skipping, too recent'.format(build.id))
+                print('Skipping, too recent')
                 continue
 
-            af = build.artifacts_file
             total_size += af['size']
-            print('  Build {id}: {action} {filename} ({size} bytes)'.format(
-                id = build.id,
+            print('{action} {filename}'.format(
                 action = 'Would delete' if self.dry_run else 'Deleting',
                 filename = af['filename'],
-                size = af['size']))
+                ))
 
             if not self.dry_run:
                 build.erase()
@@ -52,6 +54,14 @@ class GitlabArtifactCleanup(object):
         self.total_deleted += total_size
         return total_size
 
+
+def format_datasize(b):
+    prefixes = ['', 'Ki', 'Mi', 'Gi', 'Ti']
+
+    for pref in prefixes:
+        if (b < 1024) or (pref == prefixes[-1]):
+            return '{:.02f} {}B'.format(b, pref) if pref else '{} B'.format(b)
+        b /= 1024.0
 
 def parse_timedelta(s):
     parts = s.split()
