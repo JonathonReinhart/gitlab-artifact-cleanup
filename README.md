@@ -15,11 +15,11 @@ with the `-g`/`--gitlab` option.
 
 You can specify any number of projects with the `-p`/`--project` option:
 
-    $ ./cleanup.py --project jreinhart/artifact-test --project jreinhart/python-gitlab
+    $ gitlab-artifact-cleanup --project jreinhart/artifact-test --project jreinhart/python-gitlab
 
 Or, you can cleanup all projects visible to you:
 
-    $ ./cleanup.py --all-projects
+    $ gitlab-artifact-cleanup --all-projects
 
 Builds for tags are never removed.
 
