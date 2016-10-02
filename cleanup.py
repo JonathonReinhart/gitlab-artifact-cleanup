@@ -50,6 +50,8 @@ def main():
     args = parse_args()
     gl = Gitlab.from_config(gitlab_id=args.gitlab)
 
+    total_deleted = 0
+
     if args.all_projects:
         for proj in gl.projects.all(all=True):
             cleanup_project(proj)
@@ -60,7 +62,11 @@ def main():
             except GitlabGetError as e:
                 print("Error getting project", pname, e)
                 continue
-            cleanup_project(proj)
+            deleted = cleanup_project(proj)
+            total_deleted += deleted
+            print('  Deleted {} bytes of artifacts'.format(deleted))
+
+    print('  Deleted {} bytes of artifacts total'.format(deleted))
 
 if __name__ == '__main__':
     main()
