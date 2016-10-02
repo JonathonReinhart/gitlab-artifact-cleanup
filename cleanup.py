@@ -4,28 +4,34 @@ import argparse
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
-def cleanup_project(proj):
-    print('Cleaning up', proj.name_with_namespace)
+class GitlabArtifactCleanup(object):
+    def __init__(self):
+        self.total_deleted = 0
 
-    total_size = 0
 
-    for build in proj.builds.list(all=True):
+    def cleanup_project(self, proj):
+        print('Cleaning up', proj.name_with_namespace)
 
-        # Skip builds without artifacts
-        if not hasattr(build, 'artifacts_file'): continue
+        total_size = 0
 
-        # Skip builds run for tagged commits
-        if build.tag:
-            print('  Build {}: Skipping for tag'.format(build.id))
-            continue
+        for build in proj.builds.list(all=True):
 
-        af = build.artifacts_file
-        total_size += af['size']
-        print('  Build {}: Deleting {} ({} bytes)'.format(build.id, af['filename'], af['size']))
+            # Skip builds without artifacts
+            if not hasattr(build, 'artifacts_file'): continue
 
-        build.erase()
+            # Skip builds run for tagged commits
+            if build.tag:
+                print('  Build {}: Skipping for tag'.format(build.id))
+                continue
 
-    return total_size
+            af = build.artifacts_file
+            total_size += af['size']
+            print('  Build {}: Deleting {} ({} bytes)'.format(build.id, af['filename'], af['size']))
+
+            build.erase()
+
+        self.total_deleted += total_size
+        return total_size
 
 
 def parse_args():
@@ -50,11 +56,11 @@ def main():
     args = parse_args()
     gl = Gitlab.from_config(gitlab_id=args.gitlab)
 
-    total_deleted = 0
+    cleanup = GitlabArtifactCleanup()
 
     if args.all_projects:
         for proj in gl.projects.all(all=True):
-            cleanup_project(proj)
+            cleanup.cleanup_project(proj)
     else:
         for pname in args.projects:
             try:
@@ -62,11 +68,10 @@ def main():
             except GitlabGetError as e:
                 print("Error getting project", pname, e)
                 continue
-            deleted = cleanup_project(proj)
-            total_deleted += deleted
+            deleted = cleanup.cleanup_project(proj)
             print('  Deleted {} bytes of artifacts'.format(deleted))
 
-    print('  Deleted {} bytes of artifacts total'.format(deleted))
+    print('Deleted {} bytes of artifacts total'.format(cleanup.total_deleted))
 
 if __name__ == '__main__':
     main()
