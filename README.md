@@ -6,7 +6,7 @@ build artifacts (see issue [#18351]). This script erases build artifacts
 using the GitLab API.
 
 ## Requirements
-- [`python-gitlab`] - My fork must be used until [PR 159] is accepted.
+- [`python-gitlab`] - As of at least [d4a24a5c4d], which is currently unreleased.
 
 ## Usage
 This script leverages the [`python-gitlab` config file][python-gitlab-config].
@@ -25,6 +25,6 @@ Builds for tags are never removed.
 
 
 [#18351]: https://gitlab.com/gitlab-org/gitlab-ce/issues/18351
-[`python-gitlab`]: https://github.com/JonathonReinhart/python-gitlab
-[PR 159]: https://github.com/gpocentek/python-gitlab/pull/159
+[`python-gitlab`]: https://github.com/gpocentek/python-gitlab
+[d4a24a5c4d]: https://github.com/gpocentek/python-gitlab/commit/d4a24a5c4dc54ac03b917723347047e3995afcc9
 [python-gitlab-config]: http://python-gitlab.readthedocs.io/en/stable/cli.html#configuration
