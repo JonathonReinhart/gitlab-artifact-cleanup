@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import print_function
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from dateutil.parser import parse as parse_datetime
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
@@ -21,7 +22,7 @@ class GitlabArtifactCleanup(object):
 
         subtotal_size = 0
         subtotal_count = 0
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         for build in proj.builds.list(all=True):
             try:
@@ -38,7 +39,7 @@ class GitlabArtifactCleanup(object):
                 continue
 
             # Skip builds that are too recent
-            ts = datetime.strptime(build.created_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+            ts = parse_datetime(build.created_at)
             age = now - ts
             if age < self.min_age:
                 print('Skipping, too recent')
