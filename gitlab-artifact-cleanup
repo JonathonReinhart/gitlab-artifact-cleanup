@@ -115,13 +115,8 @@ def parse_args():
             help='GitLab server defined in config file .python-gitlab')
     ap.add_argument('--all-projects', action='store_true',
             help='Cleanup artifacts for all accessible projects')
-    ap.add_argument('-m', '--min-age', type=parse_timedelta, default=timedelta(),
-            help='Minimum age for artifacts to be deleted;\n'
-                 'e.g. "172800"\n'
-                 '  == "172800 seconds"\n'
-                 '  == "2880 minutes"\n'
-                 '  == "48 hours"\n'
-                 '  == "2 days"')
+    ap.add_argument('-m', '--min-age', type=int, 
+            help='Minimum age for artifacts to be deleted in days')
     ap.add_argument('-n', '--dry-run', action='store_true',
             help="Don't actually delete anything")
     ap.add_argument('-p', '--project', dest='projects', action='append',
@@ -142,7 +137,8 @@ def main():
 
     print('Would delete' if args.dry_run else 'Deleting', 'non-tagged artifacts', end='')
     if args.min_age:
-        print(' older than', args.min_age, end='')
+        print(' older than', args.min_age, 'days', end='')
+ 
     print('\n')
 
 
@@ -150,7 +146,7 @@ def main():
 
     cleanup = GitlabArtifactCleanup(
             dry_run = args.dry_run,
-            min_age = args.min_age,
+            min_age = timedelta(days=args.min_age),
             )
 
     if args.all_projects:
