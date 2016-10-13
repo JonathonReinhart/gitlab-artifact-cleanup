@@ -1,11 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from __future__ import print_function
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from dateutil.parser import parse as parse_datetime
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
 __version__ = '0.2.0'
+
+# Python2:
+# import pytz
+#def utcnow():
+#   return datetime.utcnow().replace(tzinfo=pytz.utc)
+
+def utcnow():
+   return datetime.now(timezone.utc)
 
 class GitlabArtifactCleanup(object):
     def __init__(self, dry_run=False, min_age=None):
@@ -15,13 +24,13 @@ class GitlabArtifactCleanup(object):
         self.total_size = 0
         self.total_count = 0
 
-
+	
     def cleanup_project(self, proj):
         print(proj.name_with_namespace)
 
         subtotal_size = 0
         subtotal_count = 0
-        now = datetime.utcnow()
+        now = utcnow() # datetime.utcnow()
 
         for build in proj.builds.list(all=True):
             try:
@@ -38,7 +47,7 @@ class GitlabArtifactCleanup(object):
                 continue
 
             # Skip builds that are too recent
-            ts = datetime.strptime(build.created_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+            ts = parse_datetime(build.created_at)
             age = now - ts
             if age < self.min_age:
                 print('Skipping, too recent')
@@ -50,7 +59,7 @@ class GitlabArtifactCleanup(object):
                 ))
 
             if not self.dry_run:
-                build.erase()
+                build.erase() # if this is missing your python-gitlab version is too old
 
             subtotal_size += af['size']
             self.total_size += af['size']
@@ -106,13 +115,8 @@ def parse_args():
             help='GitLab server defined in config file .python-gitlab')
     ap.add_argument('--all-projects', action='store_true',
             help='Cleanup artifacts for all accessible projects')
-    ap.add_argument('-m', '--min-age', type=parse_timedelta, default=timedelta(),
-            help='Minimum age for artifacts to be deleted;\n'
-                 'e.g. "172800"\n'
-                 '  == "172800 seconds"\n'
-                 '  == "2880 minutes"\n'
-                 '  == "48 hours"\n'
-                 '  == "2 days"')
+    ap.add_argument('-m', '--min-age', type=int, 
+            help='Minimum age for artifacts to be deleted in days')
     ap.add_argument('-n', '--dry-run', action='store_true',
             help="Don't actually delete anything")
     ap.add_argument('-p', '--project', dest='projects', action='append',
@@ -133,7 +137,8 @@ def main():
 
     print('Would delete' if args.dry_run else 'Deleting', 'non-tagged artifacts', end='')
     if args.min_age:
-        print(' older than', args.min_age, end='')
+        print(' older than', args.min_age, 'days', end='')
+ 
     print('\n')
 
 
@@ -141,7 +146,7 @@ def main():
 
     cleanup = GitlabArtifactCleanup(
             dry_run = args.dry_run,
-            min_age = args.min_age,
+            min_age = timedelta(days=args.min_age),
             )
 
     if args.all_projects:
