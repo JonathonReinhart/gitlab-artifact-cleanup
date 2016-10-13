@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta 
+
+#if this was in python3, we could do from datetime import timezone
+import pytz # python 2 sucks for timezones, you need to pip install pytz
+
+import dateutil.parser
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
 __version__ = '0.2.0'
+
+# Python3:
+#def utcnow():
+#   return datetime.now(timezone.utc) # versus datetime.utcnow()
+
+# Python2:
+def utcnow():
+   return datetime.utcnow().replace(tzinfo=pytz.utc)
+
 
 class GitlabArtifactCleanup(object):
     def __init__(self, dry_run=False, min_age=None):
@@ -15,13 +29,22 @@ class GitlabArtifactCleanup(object):
         self.total_size = 0
         self.total_count = 0
 
-
+    def parse_timestamp(self, astr):
+        """ Parse string get a timestamp that is timezone aware """
+        ts = 0
+	try:
+	   ts = dateutil.parser.parse(astr)
+	except:
+	   print("Unable to parse ISO-8601 datetime: "+repr(astr)+" ?")
+	   raise
+	return ts	
+	
     def cleanup_project(self, proj):
         print(proj.name_with_namespace)
 
         subtotal_size = 0
         subtotal_count = 0
-        now = datetime.utcnow()
+        now = utcnow() # datetime.utcnow()
 
         for build in proj.builds.list(all=True):
             try:
@@ -38,8 +61,8 @@ class GitlabArtifactCleanup(object):
                 continue
 
             # Skip builds that are too recent
-            ts = datetime.strptime(build.created_at, "%Y-%m-%dT%H:%M:%S.%fZ")
-            age = now - ts
+            ts = self.parse_timestamp(build.created_at) 
+            age = now - ts # both or neither of these must contain timezones
             if age < self.min_age:
                 print('Skipping, too recent')
                 continue
@@ -50,7 +73,7 @@ class GitlabArtifactCleanup(object):
                 ))
 
             if not self.dry_run:
-                build.erase()
+                build.delete() # used to be erase?
 
             subtotal_size += af['size']
             self.total_size += af['size']

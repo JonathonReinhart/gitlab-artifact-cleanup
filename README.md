@@ -7,6 +7,8 @@ using the GitLab API.
 
 ## Requirements
 - [`python-gitlab`] - As of at least [d4a24a5c4d], which is currently unreleased.
+- [`python-dateutil`] - A robust ISO-8601 timestamp parser, among other things
+- [`pytz`] - Because Python 2.7 has no tz info
 
 ## Usage
 This script leverages the [`python-gitlab` config file][python-gitlab-config].
