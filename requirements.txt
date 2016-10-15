@@ -1,2 +1,2 @@
 python-gitlab
-dateutil
+python-dateutil
