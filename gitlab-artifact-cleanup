@@ -108,12 +108,13 @@ def parse_args():
     ap.add_argument('--all-projects', action='store_true',
             help='Cleanup artifacts for all accessible projects')
     ap.add_argument('-m', '--min-age', type=parse_timedelta, default=timedelta(),
-            help='Minimum age for artifacts to be deleted;\n'
-                 'e.g. "172800"\n'
-                 '  == "172800 seconds"\n'
-                 '  == "2880 minutes"\n'
-                 '  == "48 hours"\n'
-                 '  == "2 days"')
+            help='Minimum age for artifacts to be deleted; Examples:\n'
+                 '  -m 60    (60 seconds)\n'
+                 '  -m "8 hours"\n'
+                 '  -m "30 days"\n'
+                 '  -m "3 weeks"\n'
+                 '  -m "6 months"\n'
+                 '  -m "2 years"\n')
     ap.add_argument('-n', '--dry-run', action='store_true',
             help="Don't actually delete anything")
     ap.add_argument('-p', '--project', dest='projects', action='append',
