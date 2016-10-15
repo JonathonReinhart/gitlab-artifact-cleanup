@@ -118,6 +118,30 @@ def parse_timedelta(s):
 
     raise ValueError
 
+def check_old_gitlab():
+    """Detect an old version of python-gitlab"""
+    from gitlab import ProjectBuild
+    try:
+        ProjectBuild.erase
+    except AttributeError:
+        print("\nYou have an old version of python-gitlab that is missing the ability to erase builds.")
+        print("See https://github.com/gpocentek/python-gitlab/pull/159.")
+        print("Monkey-patching a solution into python-gitlab...\n")
+
+        # Monkey-patch the functionality into python-gitlab
+
+        class GitlabBuildEraseError(GitlabRetryError):
+            pass
+
+        def erase(self, **kwargs):
+            """Erase the build (remove build artifacts and trace)."""
+            url = '/projects/%s/builds/%s/erase' % (self.project_id, self.id)
+            r = self.gitlab._raw_post(url)
+            raise_error_from_response(r, GitlabBuildEraseError, 201)
+
+        ProjectBuild.erase = erase
+
+
 def parse_args():
     ap = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument('-g', '--gitlab',
@@ -149,6 +173,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    check_old_gitlab()
 
     print('Would delete' if args.dry_run else 'Deleting', 'non-tagged artifacts', end='')
     if args.min_age:
