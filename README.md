@@ -25,6 +25,9 @@ Or, you can cleanup all projects visible to you:
 
 Builds for tags are never removed.
 
+## License
+
+This software is released under the [MIT License](https://opensource.org/licenses/MIT).
 
 [#18351]: https://gitlab.com/gitlab-org/gitlab-ce/issues/18351
 [`python-gitlab`]: https://github.com/gpocentek/python-gitlab
