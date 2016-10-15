@@ -6,9 +6,9 @@ build artifacts (see issue [#18351]). This script erases build artifacts
 using the GitLab API.
 
 ## Requirements
-- [`python-gitlab`] - As of at least [d4a24a5c4d], which is currently unreleased.
+- [`python-gitlab`] - Python GitLab API client
 - [`python-dateutil`] - A robust ISO-8601 timestamp parser, among other things
-- [`pytz`] - Timezone info (if you are using python2)
+- [`pytz`] - Timezone info *(Only required if you are using Python 2)*
 
 ## Usage
 This script leverages the [`python-gitlab` config file][python-gitlab-config].
@@ -30,6 +30,9 @@ Builds for tags are never removed.
 This software is released under the [MIT License](https://opensource.org/licenses/MIT).
 
 [#18351]: https://gitlab.com/gitlab-org/gitlab-ce/issues/18351
-[`python-gitlab`]: https://github.com/gpocentek/python-gitlab
 [d4a24a5c4d]: https://github.com/gpocentek/python-gitlab/commit/d4a24a5c4dc54ac03b917723347047e3995afcc9
+
+[`python-gitlab`]: https://github.com/gpocentek/python-gitlab
 [python-gitlab-config]: http://python-gitlab.readthedocs.io/en/stable/cli.html#configuration
+[`python-dateutil`]: https://dateutil.readthedocs.io/en/stable/
+[`pytz`]: http://pythonhosted.org/pytz/
