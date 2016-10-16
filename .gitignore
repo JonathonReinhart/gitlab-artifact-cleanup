@@ -1,1 +1,6 @@
-*.pyc
+*.py[c|o]
+/.Python
+/bin
+/include
+/lib
+/pip-selfcheck.json
