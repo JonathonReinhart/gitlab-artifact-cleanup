@@ -6,7 +6,7 @@ build artifacts (see issue [#18351]). This script erases build artifacts
 using the GitLab API.
 
 ## Requirements
-- [`python-gitlab`] - Python GitLab API client
+- [`python-gitlab`] - Python GitLab API client *(At least version 0.16)*
 - [`python-dateutil`] - A robust ISO-8601 timestamp parser, among other things
 - [`pytz`] - Timezone info *(Only required if you are using Python 2)*
 

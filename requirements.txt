@@ -1,2 +1,2 @@
-python-gitlab
+python-gitlab>=0.16
 python-dateutil
