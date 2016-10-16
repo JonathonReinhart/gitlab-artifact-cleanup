@@ -25,7 +25,7 @@ First versioned release
 
 
 [Unreleased]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.2.0...1.0.0
+[1.0.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.1.0...v0.2.0
 
 [#4]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/pull/4
