@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.0.0] - 2016-10-16
 ### Added
 - Detect old python-gitlab version and monkey-patch around it
 
@@ -24,7 +24,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 First versioned release
 
 
-[Unreleased]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.2.0...1.0.0
 [0.2.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.1.0...v0.2.0
 
 [#4]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/pull/4

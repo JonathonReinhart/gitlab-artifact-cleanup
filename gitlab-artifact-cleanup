@@ -7,7 +7,7 @@ from dateutil.parser import parse as parse_datetime
 from gitlab import Gitlab
 from gitlab.exceptions import *
 
-__version__ = '0.2.0'
+__version__ = '1.0.0'
 
 try:
     # python3 only
