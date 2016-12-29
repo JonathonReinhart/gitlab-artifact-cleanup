@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse as parse_datetime
 from gitlab import Gitlab
 from gitlab.exceptions import *
+import gitlab.config
 
 __version__ = '1.0.0'
 
@@ -175,13 +176,17 @@ def main():
     args = parse_args()
     check_old_gitlab()
 
+    try:
+        gl = Gitlab.from_config(gitlab_id=args.gitlab)
+    except gitlab.config.ConfigError as cfgerr:
+        print("Error loading python-gitlab config:", cfgerr)
+        print("See http://python-gitlab.readthedocs.io/en/stable/cli.html#configuration")
+        sys.exit(1)
+
     print('Would delete' if args.dry_run else 'Deleting', 'non-tagged artifacts', end='')
     if args.min_age:
         print(' older than', args.min_age, end='')
     print('\n')
-
-
-    gl = Gitlab.from_config(gitlab_id=args.gitlab)
 
     cleanup = GitlabArtifactCleanup(
             dry_run = args.dry_run,

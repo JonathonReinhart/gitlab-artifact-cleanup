@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Better handling of missing/invalid config files
+
+
 ## [1.0.0] - 2016-10-16
 ### Added
 - Detect old python-gitlab version and monkey-patch around it
