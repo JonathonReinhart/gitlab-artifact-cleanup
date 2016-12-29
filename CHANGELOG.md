@@ -29,9 +29,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 First versioned release
 
 
-[Unreleased]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v1.0.1...HEAD
-[1.0.1]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.2.0...v1.0.0
-[0.2.0]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/compare/v0.1.0...v0.2.0
+[Unreleased]: https://gitlab.com/jonathon-reinhart/gitlab-artifact-cleanup/compare/v1.0.1...HEAD
+[1.0.1]: https://gitlab.com/jonathon-reinhart/gitlab-artifact-cleanup/compare/v1.0.0...v1.0.1
+[1.0.0]: https://gitlab.com/jonathon-reinhart/gitlab-artifact-cleanup/compare/v0.2.0...v1.0.0
+[0.2.0]: https://gitlab.com/jonathon-reinhart/gitlab-artifact-cleanup/compare/v0.1.0...v0.2.0
 
-[#4]: https://github.com/JonathonReinhart/gitlab-artifact-cleanup/pull/4
+[#4]: https://gitlab.com/jonathon-reinhart/gitlab-artifact-cleanup/merge_requests/4
