@@ -1,5 +1,5 @@
-gitlab-artifact-cleanup
-=======================
+[gitlab-artifact-cleanup]
+=========================
 
 Currently (as of GitLab 8.12) there are no admin tools for cleaning up
 build artifacts (see issue [#18351]). This script erases build artifacts
@@ -28,6 +28,9 @@ Builds for tags are never removed.
 ## License
 
 This software is released under the [MIT License](https://opensource.org/licenses/MIT).
+
+
+[gitlab-artifact-cleanup]: https://gitlab.com/JonathonReinhart/gitlab-artifact-cleanup
 
 [#18351]: https://gitlab.com/gitlab-org/gitlab-ce/issues/18351
 [d4a24a5c4d]: https://github.com/gpocentek/python-gitlab/commit/d4a24a5c4dc54ac03b917723347047e3995afcc9
