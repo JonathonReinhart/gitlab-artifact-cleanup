@@ -8,7 +8,7 @@ from gitlab import Gitlab
 from gitlab.exceptions import *
 import gitlab.config
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 try:
     # python3 only
