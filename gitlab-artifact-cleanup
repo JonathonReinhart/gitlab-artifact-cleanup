@@ -8,6 +8,9 @@ from gitlab import Gitlab
 from gitlab.exceptions import *
 import gitlab.config
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 __version__ = '1.0.1'
 
 try:
@@ -42,7 +45,7 @@ class GitlabArtifactCleanup(object):
         subtotal_count = 0
         now = utcnow()
 
-        for build in proj.builds.list(all=True):
+        for build in proj.jobs.list(all=True):
             try:
                 af = build.artifacts_file
             except AttributeError:
@@ -119,30 +122,6 @@ def parse_timedelta(s):
 
     raise ValueError
 
-def check_old_gitlab():
-    """Detect an old version of python-gitlab"""
-    from gitlab import ProjectBuild
-    try:
-        ProjectBuild.erase
-    except AttributeError:
-        print("\nYou have an old version of python-gitlab that is missing the ability to erase builds.")
-        print("See https://github.com/gpocentek/python-gitlab/pull/159.")
-        print("Monkey-patching a solution into python-gitlab...\n")
-
-        # Monkey-patch the functionality into python-gitlab
-
-        class GitlabBuildEraseError(GitlabRetryError):
-            pass
-
-        def erase(self, **kwargs):
-            """Erase the build (remove build artifacts and trace)."""
-            url = '/projects/%s/builds/%s/erase' % (self.project_id, self.id)
-            r = self.gitlab._raw_post(url)
-            raise_error_from_response(r, GitlabBuildEraseError, 201)
-
-        ProjectBuild.erase = erase
-
-
 def parse_args():
     ap = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument('-g', '--gitlab',
@@ -174,10 +153,9 @@ def parse_args():
 
 def main():
     args = parse_args()
-    check_old_gitlab()
-
+    
     try:
-        gl = Gitlab.from_config(gitlab_id=args.gitlab)
+        gl = Gitlab.from_config('gitlab', ['python-gitlab.cfg'])
     except gitlab.config.ConfigError as cfgerr:
         print("Error loading python-gitlab config:", cfgerr)
         print("See http://python-gitlab.readthedocs.io/en/stable/cli.html#configuration")
@@ -194,7 +172,11 @@ def main():
             )
 
     if args.all_projects:
-        for proj in gl.projects.all(all=True):
+        all_projects = gl.projects.list(all=True)
+
+        print("Number of projects: " + str(len(all_projects)))
+
+        for proj in all_projects:
             cleanup.cleanup_project(proj)
     else:
         for pname in args.projects:
