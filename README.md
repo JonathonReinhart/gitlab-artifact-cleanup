@@ -1,7 +1,7 @@
 [gitlab-artifact-cleanup]
 =========================
 
-Currently (as of GitLab 8.12) there are no admin tools for cleaning up
+Currently (as of GitLab 11.0.0) there are no admin tools for cleaning up
 build artifacts (see issue [#18351]). This script erases build artifacts
 using the GitLab API.
 
